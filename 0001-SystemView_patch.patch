@@ -1,0 +1,189 @@
+From 43d147dca6738461390d9ca97f03a77e0a25bd85 Mon Sep 17 00:00:00 2001
+From: rbudai <robert.budai@analog.com>
+Date: Tue, 20 Jun 2023 13:55:27 +0200
+Subject: [PATCH] SystemView_patch
+
+Signed-off-by: rbudai <robert.budai@analog.com>
+---
+ include/FreeRTOS.h                | 20 ++++++++++++++++++++
+ include/task.h                    | 22 ++++++++++++++++++++++
+ portable/GCC/ARM_CM4F/port.c      |  6 ++++++
+ portable/GCC/ARM_CM4F/portmacro.h |  2 +-
+ tasks.c                           | 20 ++++++++++++++++++++
+ 5 files changed, 69 insertions(+), 1 deletion(-)
+
+diff --git a/include/FreeRTOS.h b/include/FreeRTOS.h
+index f1ab32c6c..9cbba5e04 100644
+--- a/include/FreeRTOS.h
++++ b/include/FreeRTOS.h
+@@ -177,6 +177,10 @@
+     #define INCLUDE_uxTaskPriorityGet    0
+ #endif
+ 
++#ifndef INCLUDE_pxTaskGetStackStart
++	#define INCLUDE_pxTaskGetStackStart 0
++#endif
++
+ #ifndef INCLUDE_vTaskDelete
+     #define INCLUDE_vTaskDelete    0
+ #endif
+@@ -511,6 +515,22 @@
+     #define tracePOST_MOVED_TASK_TO_READY_STATE( pxTCB )
+ #endif
+ 
++#ifndef traceREADDED_TASK_TO_READY_STATE
++	#define traceREADDED_TASK_TO_READY_STATE( pxTCB )	traceMOVED_TASK_TO_READY_STATE( pxTCB )
++#endif
++
++#ifndef traceMOVED_TASK_TO_DELAYED_LIST
++	#define traceMOVED_TASK_TO_DELAYED_LIST()
++#endif
++
++#ifndef traceMOVED_TASK_TO_OVERFLOW_DELAYED_LIST
++	#define traceMOVED_TASK_TO_OVERFLOW_DELAYED_LIST()
++#endif
++
++#ifndef traceMOVED_TASK_TO_SUSPENDED_LIST
++	#define traceMOVED_TASK_TO_SUSPENDED_LIST( pxTCB )
++#endif
++
+ #ifndef traceQUEUE_CREATE
+     #define traceQUEUE_CREATE( pxNewQueue )
+ #endif
+diff --git a/include/task.h b/include/task.h
+index 702f74dce..b1467ba96 100644
+--- a/include/task.h
++++ b/include/task.h
+@@ -1597,6 +1597,28 @@ UBaseType_t uxTaskGetStackHighWaterMark( TaskHandle_t xTask ) PRIVILEGED_FUNCTIO
+  */
+ configSTACK_DEPTH_TYPE uxTaskGetStackHighWaterMark2( TaskHandle_t xTask ) PRIVILEGED_FUNCTION;
+ 
++
++/**
++ * task.h
++ * <PRE>uint8_t* pxTaskGetStackStart( TaskHandle_t xTask);</PRE>
++ *
++ * INCLUDE_pxTaskGetStackStart must be set to 1 in FreeRTOSConfig.h for
++ * this function to be available.
++ *
++ * Returns the start of the stack associated with xTask.  That is,
++ * the highest stack memory address on architectures where the stack grows down
++ * from high memory, and the lowest memory address on architectures where the
++ * stack grows up from low memory.
++ *
++ * @param xTask Handle of the task associated with the stack returned.
++ * Set xTask to NULL to return the stack of the calling task.
++ *
++ * @return A pointer to the start of the stack.
++ */
++uint8_t* pxTaskGetStackStart( TaskHandle_t xTask) PRIVILEGED_FUNCTION;
++
++
++
+ /* When using trace macros it is sometimes necessary to include task.h before
+  * FreeRTOS.h.  When this is done TaskHookFunction_t will not yet have been defined,
+  * so the following two prototypes will cause a compilation error.  This can be
+diff --git a/portable/GCC/ARM_CM4F/port.c b/portable/GCC/ARM_CM4F/port.c
+index 88fc76db8..7b581c31d 100755
+--- a/portable/GCC/ARM_CM4F/port.c
++++ b/portable/GCC/ARM_CM4F/port.c
+@@ -539,14 +539,20 @@ void xPortSysTickHandler( void )
+      * save and then restore the interrupt mask value as its value is already
+      * known. */
+     portDISABLE_INTERRUPTS();
++    traceISR_ENTER();
+     {
+         /* Increment the RTOS tick. */
+         if( xTaskIncrementTick() != pdFALSE )
+         {
++            traceISR_EXIT_TO_SCHEDULER();
+             /* A context switch is required.  Context switching is performed in
+              * the PendSV interrupt.  Pend the PendSV interrupt. */
+             portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;
+         }
++        else
++        {
++            traceISR_EXIT();
++        }
+     }
+     portENABLE_INTERRUPTS();
+ }
+diff --git a/portable/GCC/ARM_CM4F/portmacro.h b/portable/GCC/ARM_CM4F/portmacro.h
+index 443661a6d..321e05902 100644
+--- a/portable/GCC/ARM_CM4F/portmacro.h
++++ b/portable/GCC/ARM_CM4F/portmacro.h
+@@ -99,7 +99,7 @@
+ 
+     #define portNVIC_INT_CTRL_REG     ( *( ( volatile uint32_t * ) 0xe000ed04 ) )
+     #define portNVIC_PENDSVSET_BIT    ( 1UL << 28UL )
+-    #define portEND_SWITCHING_ISR( xSwitchRequired )    do { if( xSwitchRequired != pdFALSE ) portYIELD(); } while( 0 )
++    #define portEND_SWITCHING_ISR( xSwitchRequired )    do { if( xSwitchRequired != pdFALSE ) { traceISR_EXIT_TO_SCHEDULER(); portYIELD(); } else { traceISR_EXIT(); }  } while( 0 )
+     #define portYIELD_FROM_ISR( x )                     portEND_SWITCHING_ISR( x )
+ /*-----------------------------------------------------------*/
+ 
+diff --git a/tasks.c b/tasks.c
+index 97539d7b6..4408be6f2 100644
+--- a/tasks.c
++++ b/tasks.c
+@@ -1717,6 +1717,7 @@ static void prvAddNewTaskToReadyList( TCB_t * pxNewTCB )
+                 mtCOVERAGE_TEST_MARKER();
+             }
+ 
++            traceMOVED_TASK_TO_SUSPENDED_LIST(pxTCB);
+             vListInsertEnd( &xSuspendedTaskList, &( pxTCB->xStateListItem ) );
+ 
+             #if ( configUSE_TASK_NOTIFICATIONS == 1 )
+@@ -3997,6 +3998,21 @@ static void prvCheckTasksWaitingTermination( void )
+ #endif /* INCLUDE_uxTaskGetStackHighWaterMark */
+ /*-----------------------------------------------------------*/
+ 
++#if (INCLUDE_pxTaskGetStackStart == 1)
++	uint8_t* pxTaskGetStackStart( TaskHandle_t xTask)
++	{
++	    TCB_t *pxTCB;
++	    UBaseType_t uxReturn;
++        (void)uxReturn;
++
++		pxTCB = prvGetTCBFromHandle( xTask );
++		return ( uint8_t * ) pxTCB->pxStack;
++	}
++
++#endif /* INCLUDE_pxTaskGetStackStart */
++/*-----------------------------------------------------------*/
++
++
+ #if ( INCLUDE_vTaskDelete == 1 )
+ 
+     static void prvDeleteTCB( TCB_t * pxTCB )
+@@ -5421,12 +5437,14 @@ static void prvAddCurrentTaskToDelayedList( TickType_t xTicksToWait,
+             {
+                 /* Wake time has overflowed.  Place this item in the overflow
+                  * list. */
++                traceMOVED_TASK_TO_OVERFLOW_DELAYED_LIST();
+                 vListInsert( pxOverflowDelayedTaskList, &( pxCurrentTCB->xStateListItem ) );
+             }
+             else
+             {
+                 /* The wake time has not overflowed, so the current block list
+                  * is used. */
++                traceMOVED_TASK_TO_DELAYED_LIST();
+                 vListInsert( pxDelayedTaskList, &( pxCurrentTCB->xStateListItem ) );
+ 
+                 /* If the task entering the blocked state was placed at the
+@@ -5456,11 +5474,13 @@ static void prvAddCurrentTaskToDelayedList( TickType_t xTicksToWait,
+         if( xTimeToWake < xConstTickCount )
+         {
+             /* Wake time has overflowed.  Place this item in the overflow list. */
++            traceMOVED_TASK_TO_OVERFLOW_DELAYED_LIST();
+             vListInsert( pxOverflowDelayedTaskList, &( pxCurrentTCB->xStateListItem ) );
+         }
+         else
+         {
+             /* The wake time has not overflowed, so the current block list is used. */
++            traceMOVED_TASK_TO_DELAYED_LIST();
+             vListInsert( pxDelayedTaskList, &( pxCurrentTCB->xStateListItem ) );
+ 
+             /* If the task entering the blocked state was placed at the head of the
+-- 
+2.34.1
+
