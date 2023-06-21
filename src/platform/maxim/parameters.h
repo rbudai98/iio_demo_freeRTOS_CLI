@@ -2,9 +2,9 @@
  *   @file   parameters.h
  *   @brief  Definitions specific to Maxim platform used by iio_demo
  *           project.
- *   @author Ciprian Regus (ciprian.regus@analog.com)
+ *   @author Robert Budai(robert.budai@analog.com)
 ********************************************************************************
- * Copyright 2022(c) Analog Devices, Inc.
+ * Copyright 2023(c) Analog Devices, Inc.
  *
  * All rights reserved.
  *

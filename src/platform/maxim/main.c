@@ -1,10 +1,10 @@
 /***************************************************************************/ 
 /**
  *   @file   main.c
- *   @brief  Main file for Maxim platform of iio_demo project.
+ *   @brief  Main file for Maxim platform of iio_demo_freeRTOS project.
  *   @author Robert Budai (robert.budai@analog.com)
  ********************************************************************************
-* Copyright 2022(c) Analog Devices, Inc.
+* Copyright 2023(c) Analog Devices, Inc.
 *
 * All rights reserved.
 *

@@ -1,9 +1,9 @@
 /***************************************************************************//**
  *   @file   platform_includes.h
  *   @brief  Includes for used platforms used by iio_demo project.
- *   @author RBolboac (ramona.bolboaca@analog.com)
+ *   @author Robert Budai (robert.budai@analog.com)
 ********************************************************************************
- * Copyright 2022(c) Analog Devices, Inc.
+ * Copyright 2023(c) Analog Devices, Inc.
  *
  * All rights reserved.
  *
