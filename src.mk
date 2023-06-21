@@ -16,8 +16,7 @@ SRCS += $(DRIVERS)/api/no_os_uart.c     \
     $(NO-OS)/util/no_os_fifo.c      \
     $(NO-OS)/util/no_os_list.c      \
     $(NO-OS)/util/no_os_util.c      \
-    $(NO-OS)/util/no_os_alloc.c     \
-    $(NO-OS)/util/no_os_mutex.c
+    $(NO-OS)/util/no_os_alloc.c     
 
 INCS += $(INCLUDE)/no_os_delay.h     \
     $(INCLUDE)/no_os_error.h     \
