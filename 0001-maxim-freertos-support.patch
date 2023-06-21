@@ -1,0 +1,249 @@
+From 29e66db3f051b3a825c12abca015cdb0cb742810 Mon Sep 17 00:00:00 2001
+From: rbudai <robert.budai@analog.com>
+Date: Wed, 21 Jun 2023 10:55:06 +0200
+Subject: [PATCH] maxim freertos support
+
+Signed-off-by: rbudai <robert.budai@analog.com>
+---
+ drivers/platform/maxim/max32650/maxim_delay.c | 8 ++++++++
+ drivers/platform/maxim/max32655/maxim_delay.c | 8 ++++++++
+ drivers/platform/maxim/max32660/maxim_delay.c | 8 ++++++++
+ drivers/platform/maxim/max32665/maxim_delay.c | 8 ++++++++
+ drivers/platform/maxim/max32670/maxim_delay.c | 7 +++++++
+ drivers/platform/maxim/max32690/maxim_delay.c | 8 ++++++++
+ drivers/platform/maxim/max78000/maxim_delay.c | 8 ++++++++
+ 7 files changed, 55 insertions(+)
+
+diff --git a/drivers/platform/maxim/max32650/maxim_delay.c b/drivers/platform/maxim/max32650/maxim_delay.c
+index 79ca671a6..0204af0da 100644
+--- a/drivers/platform/maxim/max32650/maxim_delay.c
++++ b/drivers/platform/maxim/max32650/maxim_delay.c
+@@ -43,6 +43,8 @@
+ 
+ static volatile unsigned long long _system_ticks = 0;
+ 
++#ifndef FREERTOS
++
+ extern void SysTick_Handler(void);
+ 
+ /* ************************************************************************** */
+@@ -52,6 +54,8 @@ void SysTick_Handler(void)
+ 	_system_ticks++;
+ }
+ 
++#endif
++
+ /**
+  * @brief Generate microseconds delay.
+  * @param usecs - Delay in microseconds.
+@@ -80,6 +84,10 @@ struct no_os_time no_os_get_time(void)
+ {
+ 	struct no_os_time t;
+ 
++#ifdef FREERTOS
++	unsigned long long _system_ticks  = (unsigned long long)xTaskGetTickCount();
++#endif
++
+ 	t.s = _system_ticks / 1000;
+ 
+ 	t.us = (_system_ticks - t.s * 1000) * 1000 + SysTick->VAL /
+diff --git a/drivers/platform/maxim/max32655/maxim_delay.c b/drivers/platform/maxim/max32655/maxim_delay.c
+index 79ca671a6..0204af0da 100644
+--- a/drivers/platform/maxim/max32655/maxim_delay.c
++++ b/drivers/platform/maxim/max32655/maxim_delay.c
+@@ -43,6 +43,8 @@
+ 
+ static volatile unsigned long long _system_ticks = 0;
+ 
++#ifndef FREERTOS
++
+ extern void SysTick_Handler(void);
+ 
+ /* ************************************************************************** */
+@@ -52,6 +54,8 @@ void SysTick_Handler(void)
+ 	_system_ticks++;
+ }
+ 
++#endif
++
+ /**
+  * @brief Generate microseconds delay.
+  * @param usecs - Delay in microseconds.
+@@ -80,6 +84,10 @@ struct no_os_time no_os_get_time(void)
+ {
+ 	struct no_os_time t;
+ 
++#ifdef FREERTOS
++	unsigned long long _system_ticks  = (unsigned long long)xTaskGetTickCount();
++#endif
++
+ 	t.s = _system_ticks / 1000;
+ 
+ 	t.us = (_system_ticks - t.s * 1000) * 1000 + SysTick->VAL /
+diff --git a/drivers/platform/maxim/max32660/maxim_delay.c b/drivers/platform/maxim/max32660/maxim_delay.c
+index 79ca671a6..0204af0da 100644
+--- a/drivers/platform/maxim/max32660/maxim_delay.c
++++ b/drivers/platform/maxim/max32660/maxim_delay.c
+@@ -43,6 +43,8 @@
+ 
+ static volatile unsigned long long _system_ticks = 0;
+ 
++#ifndef FREERTOS
++
+ extern void SysTick_Handler(void);
+ 
+ /* ************************************************************************** */
+@@ -52,6 +54,8 @@ void SysTick_Handler(void)
+ 	_system_ticks++;
+ }
+ 
++#endif
++
+ /**
+  * @brief Generate microseconds delay.
+  * @param usecs - Delay in microseconds.
+@@ -80,6 +84,10 @@ struct no_os_time no_os_get_time(void)
+ {
+ 	struct no_os_time t;
+ 
++#ifdef FREERTOS
++	unsigned long long _system_ticks  = (unsigned long long)xTaskGetTickCount();
++#endif
++
+ 	t.s = _system_ticks / 1000;
+ 
+ 	t.us = (_system_ticks - t.s * 1000) * 1000 + SysTick->VAL /
+diff --git a/drivers/platform/maxim/max32665/maxim_delay.c b/drivers/platform/maxim/max32665/maxim_delay.c
+index 79ca671a6..0204af0da 100644
+--- a/drivers/platform/maxim/max32665/maxim_delay.c
++++ b/drivers/platform/maxim/max32665/maxim_delay.c
+@@ -43,6 +43,8 @@
+ 
+ static volatile unsigned long long _system_ticks = 0;
+ 
++#ifndef FREERTOS
++
+ extern void SysTick_Handler(void);
+ 
+ /* ************************************************************************** */
+@@ -52,6 +54,8 @@ void SysTick_Handler(void)
+ 	_system_ticks++;
+ }
+ 
++#endif
++
+ /**
+  * @brief Generate microseconds delay.
+  * @param usecs - Delay in microseconds.
+@@ -80,6 +84,10 @@ struct no_os_time no_os_get_time(void)
+ {
+ 	struct no_os_time t;
+ 
++#ifdef FREERTOS
++	unsigned long long _system_ticks  = (unsigned long long)xTaskGetTickCount();
++#endif
++
+ 	t.s = _system_ticks / 1000;
+ 
+ 	t.us = (_system_ticks - t.s * 1000) * 1000 + SysTick->VAL /
+diff --git a/drivers/platform/maxim/max32670/maxim_delay.c b/drivers/platform/maxim/max32670/maxim_delay.c
+index 554d37925..413792929 100644
+--- a/drivers/platform/maxim/max32670/maxim_delay.c
++++ b/drivers/platform/maxim/max32670/maxim_delay.c
+@@ -43,6 +43,8 @@
+ 
+ static volatile unsigned long long _system_ticks = 0;
+ 
++#ifndef FREERTOS
++
+ extern void SysTick_Handler(void);
+ 
+ /* ************************************************************************** */
+@@ -52,6 +54,7 @@ void SysTick_Handler(void)
+ 	_system_ticks++;
+ }
+ 
++#endif
+ /**
+  * @brief Generate microseconds delay.
+  * @param usecs - Delay in microseconds.
+@@ -80,6 +83,10 @@ struct no_os_time no_os_get_time(void)
+ {
+ 	struct no_os_time t;
+ 
++#ifdef FREERTOS
++	unsigned long long _system_ticks  = (unsigned long long)xTaskGetTickCount();
++#endif
++
+ 	t.s = _system_ticks / 1000;
+ 
+ 	t.us = (_system_ticks - t.s * 1000) * 1000 + SysTick->VAL /
+diff --git a/drivers/platform/maxim/max32690/maxim_delay.c b/drivers/platform/maxim/max32690/maxim_delay.c
+index eb2f8ce03..b34232bae 100644
+--- a/drivers/platform/maxim/max32690/maxim_delay.c
++++ b/drivers/platform/maxim/max32690/maxim_delay.c
+@@ -43,6 +43,8 @@
+ 
+ static volatile unsigned long long _system_ticks = 0;
+ 
++#ifndef FREERTOS
++
+ extern void SysTick_Handler(void);
+ 
+ /* ************************************************************************** */
+@@ -52,6 +54,8 @@ void SysTick_Handler(void)
+ 	_system_ticks++;
+ }
+ 
++#endif
++
+ /**
+  * @brief Generate microseconds delay.
+  * @param usecs - Delay in microseconds.
+@@ -80,6 +84,10 @@ struct no_os_time no_os_get_time(void)
+ {
+ 	struct no_os_time t;
+ 
++#ifdef FREERTOS
++	unsigned long long _system_ticks  = (unsigned long long)xTaskGetTickCount();
++#endif
++
+ 	t.s = _system_ticks / 1000;
+ 
+ 	t.us = (_system_ticks - t.s * 1000) * 1000 + SysTick->VAL /
+diff --git a/drivers/platform/maxim/max78000/maxim_delay.c b/drivers/platform/maxim/max78000/maxim_delay.c
+index 79ca671a6..0204af0da 100644
+--- a/drivers/platform/maxim/max78000/maxim_delay.c
++++ b/drivers/platform/maxim/max78000/maxim_delay.c
+@@ -43,6 +43,8 @@
+ 
+ static volatile unsigned long long _system_ticks = 0;
+ 
++#ifndef FREERTOS
++
+ extern void SysTick_Handler(void);
+ 
+ /* ************************************************************************** */
+@@ -52,6 +54,8 @@ void SysTick_Handler(void)
+ 	_system_ticks++;
+ }
+ 
++#endif
++
+ /**
+  * @brief Generate microseconds delay.
+  * @param usecs - Delay in microseconds.
+@@ -80,6 +84,10 @@ struct no_os_time no_os_get_time(void)
+ {
+ 	struct no_os_time t;
+ 
++#ifdef FREERTOS
++	unsigned long long _system_ticks  = (unsigned long long)xTaskGetTickCount();
++#endif
++
+ 	t.s = _system_ticks / 1000;
+ 
+ 	t.us = (_system_ticks - t.s * 1000) * 1000 + SysTick->VAL /
+-- 
+2.34.1
+
