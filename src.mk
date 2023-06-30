@@ -35,8 +35,8 @@ INCS += $(INCLUDE)/no_os_delay.h     \
 # linking th mutex implementation for freeRTOS
 ifeq '$(FREERTOS)' 'y'
 SRCS += $(NO-OS)/drivers/platform/freeRTOS/freertos_mutex.c \
-        $(NO-OS)/drivers/platform/freeRTOS/freertos_semaphore.c 
-
+        $(NO-OS)/drivers/platform/freeRTOS/freertos_semaphore.c \
+        $(NO-OS)/drivers/platform/freeRTOS/freertos_delay.c 
 INCS += $(PROJECT)/src/platform/$(PLATFORM)/FreeRTOSConfig.h
 
 else

@@ -59,6 +59,7 @@ struct no_os_uart_init_param iio_demo_uart_ip = {
 	.stop = NO_OS_UART_STOP_1_BIT,
 	.extra = UART_EXTRA,
 	.platform_ops = UART_OPS,
+	// .mutex = xUARTmutex,
 };
 
 struct adc_demo_init_param adc_init_par = {

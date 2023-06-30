@@ -51,6 +51,24 @@
 #include "no_os_util.h"
 #include "no_os_timer.h"
 
+#ifdef FREERTOS
+
+// FreeRTOS
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+#include "FreeRTOS.h"
+#include "FreeRTOSConfig.h"
+#include "portmacro.h"
+#include "task.h"
+#include "semphr.h"
+#include "wut.h"
+#include "uart.h"
+#include "lp.h"
+#include "no_os_delay.h"
+
+#endif
+
 /******************************************************************************/
 /********************** Macros and Constants Definitions **********************/
 /******************************************************************************/

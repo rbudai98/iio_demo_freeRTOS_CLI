@@ -51,23 +51,8 @@
 #include "iio_trigger_example.h"
 #endif
 
-// FreeRTOS
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-
-#include "FreeRTOS.h"
-#include "FreeRTOSConfig.h"
-#include "portmacro.h"
-#include "task.h"
-#include "semphr.h"
-#include "wut.h"
-#include "uart.h"
-#include "lp.h"
-#include "no_os_delay.h"
-
 /* Mutual exclusion (mutex) semaphores */
-SemaphoreHandle_t xUARTmutex;
+// SemaphoreHandle_t xUARTmutex;
 SemaphoreHandle_t xGPIOmutex;
 
 /* Enables/disables tick-less mode */
@@ -98,7 +83,11 @@ mxc_gpio_cfg_t uart_rts = {MXC_GPIO0, MXC_GPIO_PIN_3, MXC_GPIO_FUNC_OUT, MXC_GPI
 
 void iiodTask(void *pvParameters)
 {
-    // int ret = iio_example_main();
+    int ret = iio_example_main();
+    while(1)
+    {
+        vTaskDelay(0.2 * configTICK_RATE_HZ);
+    }
 }
 
 /**
@@ -144,10 +133,7 @@ int create_tasks(void)
 {
     //Initial wait time
     // for (int i = 0; i < 0x00FFFF; i++){}
-
-
-
-    xUARTmutex = xSemaphoreCreateMutex();
+    // xUARTmutex = &xSemaphoreCreateMutex();
     xGPIOmutex = xSemaphoreCreateMutex();
 
     // xSemaphoreGive(xUARTmutex);
@@ -165,7 +151,7 @@ int create_tasks(void)
             printf("xTaskCreate() failed to create a task.\n");
         }
         else if ((xTaskCreate(blinkingTask, (const char *)"blinkingTask", configMINIMAL_STACK_SIZE, NULL,
-                              tskIDLE_PRIORITY + 2, NULL) != pdPASS))
+                              tskIDLE_PRIORITY + 1, NULL) != pdPASS))
         {
             printf("xTaskCreate() failed to create a task.\n");
         }
