@@ -64,6 +64,6 @@ void vPostSleepProcessing(uint32_t);
 #define INCLUDE_xTaskGetIdleTaskHandle                          1
 #define INCLUDE_pxTaskGetStackStart                             1
 
-// #include "SEGGER_SYSVIEW_FreeRTOS.h"
+#include "SEGGER_SYSVIEW_FreeRTOS.h"
 
 #endif // IIO_DEMO_FREE_RTOS_CONFIG

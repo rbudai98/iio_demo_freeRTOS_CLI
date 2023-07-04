@@ -49,3 +49,16 @@ INCS += $(DRIVERS)/adc/adc_demo/adc_demo.h \
 
 SRCS += $(DRIVERS)/adc/adc_demo/adc_demo.c \
     $(DRIVERS)/dac/dac_demo/dac_demo.c
+
+
+# Link Segger view files
+INCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/SEGGER/*.h)
+INCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/Config/*.h)
+INCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/Sample/FreeRTOSV10.4/*.h)
+
+SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/SEGGER/*.c)
+SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/SEGGER/Syscalls/*.c)
+SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/Sample/FreeRTOSV10.4/*.c)
+SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/Sample/FreeRTOSV10.4/Config/Cortex-M/*.c)
+
+ASM_SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/SEGGER/SEGGER_RTT_ASM_ARMv7M.S)

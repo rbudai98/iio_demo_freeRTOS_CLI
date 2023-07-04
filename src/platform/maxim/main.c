@@ -177,6 +177,7 @@ int create_tasks(void)
  *******************************************************************************/
 int main()
 {
+    traceSTART();
     int ret = -1;
 
 #if TARGET_NUM == 32660
