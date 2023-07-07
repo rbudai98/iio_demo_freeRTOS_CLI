@@ -13,7 +13,7 @@
 #define configTICK_RATE_HZ ((portTickType)1000)
 #define configRTC_TICK_RATE_HZ (32768)
 #define configTOTAL_HEAP_SIZE ((size_t)(26 * 1024))
-#define configMINIMAL_STACK_SIZE ((uint16_t)448)
+#define configMINIMAL_STACK_SIZE ((uint16_t)512)
 #define configIIO_APP_STACK_SIZE ((uint16_t)1024)
 // #define configSUPPORT_STATIC_ALLOCATION 1
 #define configMAX_PRIORITIES 5
@@ -63,7 +63,5 @@ void vPostSleepProcessing(uint32_t);
 #define configCOMMAND_INT_MAX_OUTPUT_SIZE 1
 #define INCLUDE_xTaskGetIdleTaskHandle                          1
 #define INCLUDE_pxTaskGetStackStart                             1
-
-#include "SEGGER_SYSVIEW_FreeRTOS.h"
 
 #endif // IIO_DEMO_FREE_RTOS_CONFIG

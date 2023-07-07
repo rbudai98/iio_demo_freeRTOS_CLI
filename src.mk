@@ -37,11 +37,12 @@ ifeq '$(FREERTOS)' 'y'
 SRCS += $(NO-OS)/drivers/platform/freeRTOS/freertos_mutex.c \
         $(NO-OS)/drivers/platform/freeRTOS/freertos_semaphore.c \
         $(NO-OS)/drivers/platform/freeRTOS/freertos_delay.c 
-INCS += $(PROJECT)/src/platform/$(PLATFORM)/FreeRTOSConfig.h
 
+INCS += $(PROJECT)/src/platform/$(PLATFORM)/FreeRTOSConfig.h
 else
 SRCS += $(NO-OS)/util/no_os_mutex.c \
-        $(NO-OS)/util/no_os_semaphore.c
+        $(NO-OS)/util/no_os_semaphore.c \
+	$(PLATFORM_DRIVERS)/maxim_delay.c	
 endif
 
 INCS += $(DRIVERS)/adc/adc_demo/adc_demo.h \
@@ -52,13 +53,20 @@ SRCS += $(DRIVERS)/adc/adc_demo/adc_demo.c \
 
 
 # Link Segger view files
-INCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/SEGGER/*.h)
-INCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/Config/*.h)
-INCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/Sample/FreeRTOSV10.4/*.h)
+# INCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/SEGGER/*.h)
+# INCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/Config/*.h)
+# INCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/Sample/FreeRTOSV10.4/*.h)
 
-SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/SEGGER/*.c)
-SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/SEGGER/Syscalls/*.c)
-SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/Sample/FreeRTOSV10.4/*.c)
-SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/Sample/FreeRTOSV10.4/Config/Cortex-M/*.c)
+# SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/SEGGER/*.c)
+# SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/SEGGER/Syscalls/*.c)
+# SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/Sample/FreeRTOSV10.4/*.c)
+# SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/Sample/FreeRTOSV10.4/Config/Cortex-M/*.c)
 
-ASM_SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/SEGGER/SEGGER_RTT_ASM_ARMv7M.S)
+# ASM_SRCS += $(wildcard /home/robi/Workspace_no-os/SEGGER_SysView/Src/SEGGER/SEGGER_RTT_ASM_ARMv7M.S)
+
+# INCS += $(wildcard /home/robi/Workspace_no-os/McuOnEclipseLibrary/lib/src/*.h)
+# INCS += $(wildcard /home/robi/Workspace_no-os/McuOnEclipseLibrary/lib/config/*.h)
+# SRCS += $(wildcard /home/robi/Workspace_no-os/McuOnEclipseLibrary/lib/src/*.c)
+
+# SRCS += /home/robi/Workspace_no-os/McuOnEclipseLibrary/lib/FreeRTOS/FreeRTOShooks.c
+# INCS += /home/robi/Workspace_no-os/McuOnEclipseLibrary/lib/IncludeMcuLibConfig.h
